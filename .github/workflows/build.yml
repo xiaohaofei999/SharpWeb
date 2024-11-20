@@ -16,9 +16,10 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Install .NET Framework 4.0 Targeting Pack
+    - name: Download and Install .NET Framework 4.0 Developer Pack
       run: |
-        choco install netfx-4.0-devpack -y
+        curl -LO https://download.microsoft.com/download/D/6/6/D6612F0C-1C33-4E7A-BDF0-8CE1B7450D25/dotNetFx40_Full_x86_x64.exe
+        start /wait dotNetFx40_Full_x86_x64.exe /quiet /norestart
       shell: cmd
 
     - name: Setup MSBuild
