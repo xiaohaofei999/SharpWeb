@@ -1,4 +1,4 @@
-name: Build .NET Framework Project with VS2019
+name: Build .NET Framework Project
 
 on:
   push:
@@ -13,15 +13,19 @@ jobs:
     runs-on: windows-2019
 
     steps:
-    - name: Checkout Code
+    # 检出代码
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Build Project with VS2019
+    # 使用 MSBuild 构建项目
+    - name: Build with MSBuild
       run: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe" SharpWeb.sln /p:Configuration=Release
+        msbuild MyProject.sln /p:Configuration=Release
 
-    - name: Archive Build Output
+    # 可选：存储构建产物
+    - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
       with:
         name: build-output
-        path: SharpWeb\bin\Release
+        path: |
+          **/bin/Release/
