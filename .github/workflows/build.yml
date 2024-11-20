@@ -16,19 +16,16 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Download and Install .NET Framework 4.0 Developer Pack
-      run: |
-        curl -LO https://go.microsoft.com/fwlink/?linkid=2139303
-        start /wait NDP40-KB2600211-x86-x64-AllOS-ENU.exe /quiet /norestart
-      shell: cmd
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
 
-    - name: Install Visual Studio Build Tools
+    - name: Install Reference Assemblies for .NET Framework 4.0
       run: |
-        curl -LO https://aka.ms/vs/17/release/vs_buildtools.exe
-        start /wait vs_buildtools.exe --quiet --wait --norestart --nocache ^
-          --add "Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools" ^
-          --includeRecommended
-      shell: cmd
+        dotnet add SharpWeb/SharpWeb.csproj package Microsoft.NETFramework.ReferenceAssemblies.net40 --version 1.0.3
+        dotnet restore
+      shell: bash
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
