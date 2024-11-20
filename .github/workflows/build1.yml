@@ -13,17 +13,21 @@ jobs:
     runs-on: windows-2019
 
     steps:
-    # 检出代码
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 使用 MSBuild 构建项目
-    - name: Build with MSBuild
+    # 可选：安装 MSBuild（如果未正确配置）
+    - name: Install MSBuild tools
       run: |
-        msbuild MyProject.sln /p:Configuration=Release
+        choco install visualstudio2019-buildtools --include-optional -y
+        refreshenv
 
-    # 可选：存储构建产物
-    - name: Upload Build Artifact
+    # 使用 MSBuild 完整路径构建
+    - name: Build with MSBuild
+      run: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin\\MSBuild.exe MyProject.sln /p:Configuration=Release"
+
+    # 可选：上传构建产物
+    - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
       with:
         name: build-output
