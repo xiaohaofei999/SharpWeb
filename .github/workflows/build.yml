@@ -16,18 +16,15 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Download .NET Framework Reference Assemblies Package
+    - name: Download .NET Framework Reference Assemblies
       run: |
-        curl -LO https://www.nuget.org/api/v2/package/Microsoft.NETFramework.ReferenceAssemblies.net40/1.0.3
-        mkdir -p SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40
-        tar -xf Microsoft.NETFramework.ReferenceAssemblies.net40.1.0.3.nupkg -C SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40
-      shell: bash
+        curl -L -o referenceassemblies.nupkg https://globalcdn.nuget.org/packages/microsoft.netframework.referenceassemblies.net40.1.0.3.nupkg
+        mkdir -p referenceassemblies
+        tar -xf referenceassemblies.nupkg -C referenceassemblies
 
-    - name: Update MSBuild Reference Paths
+    - name: Set Reference Assemblies Path
       run: |
-        echo "<PropertyGroup>" > SharpWeb/Directory.Build.props
-        echo "  <AdditionalLibPaths>$(pwd)/SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40/lib/net40</AdditionalLibPaths>" >> SharpWeb/Directory.Build.props
-        echo "</PropertyGroup>" >> SharpWeb/Directory.Build.props
+        echo ##vso[task.setvariable variable=ReferencePath]$PWD/referenceassemblies/lib/net40
       shell: bash
 
     - name: Setup MSBuild
@@ -35,4 +32,4 @@ jobs:
 
     - name: Build Project
       run: |
-        msbuild SharpWeb.sln /p:Configuration=Release /p:ReferencePath=$(pwd)/SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40/lib/net40
+        msbuild SharpWeb.sln /p:Configuration=Release /p:ReferencePath=$ReferencePath
