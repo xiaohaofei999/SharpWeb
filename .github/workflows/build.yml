@@ -17,12 +17,14 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Download and Extract Reference Assemblies
+      shell: powershell
       run: |
-        curl -L -o referenceassemblies.nupkg https://globalcdn.nuget.org/packages/microsoft.netframework.referenceassemblies.net40.1.0.3.nupkg?packageVersion=1.0.3
-        mkdir -p "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0"
-        tar -xf referenceassemblies.nupkg -C ./referenceassemblies
-        copy ".\referenceassemblies\build\.NETFramework\v4.0\*" "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Y
-      shell: cmd
+        Invoke-WebRequest -Uri "https://globalcdn.nuget.org/packages/microsoft.netframework.referenceassemblies.net40.1.0.3.nupkg?packageVersion=1.0.3" -OutFile "referenceassemblies.nupkg"
+        mkdir ./referenceassemblies -ErrorAction Ignore
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("referenceassemblies.nupkg", "./referenceassemblies")
+        New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0"
+        Copy-Item -Path "./referenceassemblies/build/.NETFramework/v4.0/*" -Destination "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" -Recurse -Force
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
