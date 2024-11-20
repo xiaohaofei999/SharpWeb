@@ -1,4 +1,4 @@
-name: Build .NET Framework Project
+name: Build .NET Framework Project with VS2019
 
 on:
   push:
@@ -10,15 +10,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest  # 使用最新的 Windows Runner
+    runs-on: windows-2019
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
-
-    - name: Setup MSBuild for VS2019
-      run: |
-        choco install visualstudio2019-buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --includeRecommended --quiet --norestart" -y
-        choco install visualstudio2019-workload-netcoretools -y
 
     - name: Build Project with VS2019
       run: |
