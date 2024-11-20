@@ -18,7 +18,10 @@ jobs:
 
     - name: Install Visual Studio Build Tools
       run: |
-        choco install visualstudio2019-buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --includeRecommended --quiet --norestart" -y
+        curl -LO https://aka.ms/vs/17/release/vs_buildtools.exe
+        start /wait vs_buildtools.exe --quiet --wait --norestart --nocache \
+          --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools \
+          --includeRecommended
       shell: cmd
 
     - name: Setup MSBuild
