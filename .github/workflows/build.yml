@@ -10,14 +10,19 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest  # 使用 Windows 环境
+    runs-on: windows-latest
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3  # 检出代码
+      uses: actions/checkout@v3
+
+    - name: Install .NET Framework 4.0 Targeting Pack
+      run: |
+        choco install netfx-4.0-devpack -y
+      shell: cmd
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1  # 设置 MSBuild 工具
+      uses: microsoft/setup-msbuild@v1
 
     - name: Build Project
       run: |
