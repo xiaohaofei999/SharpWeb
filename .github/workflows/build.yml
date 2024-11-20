@@ -16,10 +16,9 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Download and Install .NET Framework 4.0 Developer Pack
+    - name: Install Visual Studio Build Tools
       run: |
-        curl -LO https://download.microsoft.com/download/D/6/6/D6612F0C-1C33-4E7A-BDF0-8CE1B7450D25/dotNetFx40_Full_x86_x64.exe
-        start /wait dotNetFx40_Full_x86_x64.exe /quiet /norestart
+        choco install visualstudio2019-buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --includeRecommended --quiet --norestart" -y
       shell: cmd
 
     - name: Setup MSBuild
