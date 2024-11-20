@@ -16,15 +16,18 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '6.0.x'
-
-    - name: Install Reference Assemblies for .NET Framework 4.0
+    - name: Download .NET Framework Reference Assemblies Package
       run: |
-        dotnet add SharpWeb/SharpWeb.csproj package Microsoft.NETFramework.ReferenceAssemblies.net40 --version 1.0.3
-        dotnet restore
+        curl -LO https://www.nuget.org/api/v2/package/Microsoft.NETFramework.ReferenceAssemblies.net40/1.0.3
+        mkdir -p SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40
+        tar -xf Microsoft.NETFramework.ReferenceAssemblies.net40.1.0.3.nupkg -C SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40
+      shell: bash
+
+    - name: Update MSBuild Reference Paths
+      run: |
+        echo "<PropertyGroup>" > SharpWeb/Directory.Build.props
+        echo "  <AdditionalLibPaths>$(pwd)/SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40/lib/net40</AdditionalLibPaths>" >> SharpWeb/Directory.Build.props
+        echo "</PropertyGroup>" >> SharpWeb/Directory.Build.props
       shell: bash
 
     - name: Setup MSBuild
@@ -32,4 +35,4 @@ jobs:
 
     - name: Build Project
       run: |
-        msbuild SharpWeb.sln /p:Configuration=Release
+        msbuild SharpWeb.sln /p:Configuration=Release /p:ReferencePath=$(pwd)/SharpWeb/packages/Microsoft.NETFramework.ReferenceAssemblies.net40/lib/net40
