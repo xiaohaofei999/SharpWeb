@@ -16,7 +16,13 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Download and Install Visual Studio Build Tools
+    - name: Download and Install .NET Framework 4.0 Developer Pack
+      run: |
+        curl -LO https://go.microsoft.com/fwlink/?linkid=2139303
+        start /wait NDP40-KB2600211-x86-x64-AllOS-ENU.exe /quiet /norestart
+      shell: cmd
+
+    - name: Install Visual Studio Build Tools
       run: |
         curl -LO https://aka.ms/vs/17/release/vs_buildtools.exe
         start /wait vs_buildtools.exe --quiet --wait --norestart --nocache ^
