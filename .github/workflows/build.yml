@@ -34,7 +34,7 @@ jobs:
         dir /s /b bin\Release
 
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v2.3.0  # Change to specific v2.3.0 version
       with:
         name: BuildOutput
         path: |
