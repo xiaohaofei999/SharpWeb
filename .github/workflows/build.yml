@@ -31,8 +31,3 @@ jobs:
     - name: Build Project
       run: |
         msbuild SharpWeb.sln /p:Configuration=Release
-    - name: Archive Build Output
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-output
-        path: SharpWeb\bin\Release
