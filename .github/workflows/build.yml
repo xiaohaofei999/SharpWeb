@@ -16,18 +16,27 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Download and Extract Reference Assemblies
-      shell: powershell
+    - name: Install Reference Assemblies
       run: |
-        Invoke-WebRequest -Uri "https://globalcdn.nuget.org/packages/microsoft.netframework.referenceassemblies.net40.1.0.3.nupkg?packageVersion=1.0.3" -OutFile "referenceassemblies.nupkg"
-        mkdir ./referenceassemblies -ErrorAction Ignore
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
-        [System.IO.Compression.ZipFile]::ExtractToDirectory("referenceassemblies.nupkg", "./referenceassemblies")
-        New-Item -ItemType Directory -Force -Path "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0"
-        Copy-Item -Path "./referenceassemblies/build/.NETFramework/v4.0/*" -Destination "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" -Recurse -Force
+        nuget install Microsoft.NETFramework.ReferenceAssemblies -Version 1.0.3 -OutputDirectory .
+
+    - name: Restore NuGet Packages
+      run: nuget restore SharpWeb.sln
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
     - name: Build Project
+      run: msbuild SharpWeb.sln /p:Configuration=Release
+
+    - name: Check Build Output
       run: |
-        msbuild SharpWeb.sln /p:Configuration=Release
+        dir /s /b bin\Release
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: BuildOutput
+        path: |
+          bin\Release\
+          **\bin\Release\*
